@@ -33,10 +33,5 @@ class Robot : public frc::TimedRobot {
   bool elevatorAtZero;
   bool elevatorNearZero;
 
-
- private:
-  frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoNameDefault = "Default";
-  const std::string kAutoNameCustom = "My Auto";
-  std::string m_autoSelected;
+  double gamer5;
 };

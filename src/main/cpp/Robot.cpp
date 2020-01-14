@@ -15,19 +15,23 @@ void Robot::RobotInit() {
   // These are from the 2019 Robot.cpp
   elevator.ConfigFactoryDefault();
   elevator.ConfigOpenloopRamp(0.05);
-  // elevator.ConfigClosedloopRamp(0.02); // Shouldn't need that
   elevator.ConfigContinuousCurrentLimit(39, 10);
   elevator.ConfigPeakCurrentLimit(0, 10);    
   elevator.SetNeutralMode(NeutralMode::Brake);
-  elevator.SetInverted(false);    // Would be good to check these two
+
+  // Would be good to check these two
+  elevator.SetInverted(false);
   elevator.SetSensorPhase(false); 
-  // elevator.ConfigPeakOutputReverse(-1.0); // Shouldn't need these two
-  // elevator.ConfigPeakOutputForward(1.0);
 
   // So are these
   elevator.Set(ControlMode::PercentOutput, 0.0);
   elevator.ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 0);
   elevator.SetSelectedSensorPosition(0, 0, 10);
+
+  // So are these, but it shouldn't need them
+  // elevator.ConfigClosedloopRamp(0.02);
+  // elevator.ConfigPeakOutputReverse(-1.0);
+  // elevator.ConfigPeakOutputForward(1.0);
 }
 
 /**
@@ -43,9 +47,12 @@ void Robot::RobotPeriodic() {
   elevatorAtZero = (absPos2 < 3); // copied. not sure why it's 3, and not 0
   elevatorNearZero = (abs(absPos2) < 100);
 
+  gamer5 = gamerJoystick.GetRawAxis(5);
+
   frc::SmartDashboard::PutNumber("absPos2", absPos2);
   frc::SmartDashboard::PutBoolean("elevatorAtZero", elevatorAtZero);
   frc::SmartDashboard::PutBoolean("elevatorNearZero", elevatorNearZero);
+  frc::SmartDashboard::PutNumber("gamer-5", gamer5);
 }
 
 /**
@@ -68,7 +75,7 @@ void Robot::AutonomousPeriodic() {
 void Robot::TeleopInit() {}
 
 void Robot::TeleopPeriodic() {
-  elevator.Set(ControlMode::PercentOutput, -gamerJoystick.GetRawAxis(5));
+  elevator.Set(ControlMode::PercentOutput, -gamer5);
 }
 
 void Robot::TestPeriodic() {}

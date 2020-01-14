@@ -13,6 +13,7 @@
 #include <frc/smartdashboard/SendableChooser.h>
 
 #include "frc/Joystick.h"
+#include "frc/smartdashboard/SmartDashboard.h"
 #include "ctre/Phoenix.h"
 
 class Robot : public frc::TimedRobot {
@@ -25,8 +26,12 @@ class Robot : public frc::TimedRobot {
   void TeleopPeriodic() override;
   void TestPeriodic() override;
 
-  TalonSRX elevator {5};
+  WPI_TalonSRX elevator{5};
   frc::Joystick gamerJoystick{2};
+
+  int absPos2; // historical name. Position of the elevator in encoder units.
+  bool elevatorAtZero;
+  bool elevatorNearZero;
 
 
  private:

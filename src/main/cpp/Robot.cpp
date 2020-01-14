@@ -12,9 +12,22 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 
 void Robot::RobotInit() {
-  m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
-  m_chooser.AddOption(kAutoNameCustom, kAutoNameCustom);
-  frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
+  // These are from the 2019 Robot.cpp
+  elevator.ConfigFactoryDefault();
+  elevator.ConfigOpenloopRamp(0.05);
+  // elevator.ConfigClosedloopRamp(0.02); // Shouldn't need that
+  elevator.ConfigContinuousCurrentLimit(39, 10);
+  elevator.ConfigPeakCurrentLimit(0, 10);    
+  elevator.SetNeutralMode(NeutralMode::Brake);
+  elevator.SetInverted(false);    // Would be good to check these two
+  elevator.SetSensorPhase(false); 
+  // elevator.ConfigPeakOutputReverse(-1.0); // Shouldn't need these two
+  // elevator.ConfigPeakOutputForward(1.0);
+
+  // So are these
+  elevator.Set(ControlMode::PercentOutput, 0.0);
+  elevator.ConfigSelectedFeedbackSensor(FeedbackDevice::CTRE_MagEncoder_Relative, 0, 0);
+  elevator.SetSelectedSensorPosition(0, 0, 10);
 }
 
 /**
@@ -25,7 +38,15 @@ void Robot::RobotInit() {
  * <p> This runs after the mode specific periodic functions, but before
  * LiveWindow and SmartDashboard integrated updating.
  */
-void Robot::RobotPeriodic() {}
+void Robot::RobotPeriodic() {
+  absPos2 = elevator.GetSelectedSensorPosition();
+  elevatorAtZero = (absPos2 < 3); // copied. not sure why it's 3, and not 0
+  elevatorNearZero = (abs(absPos2) < 100);
+
+  frc::SmartDashboard::PutNumber("absPos2", absPos2);
+  frc::SmartDashboard::PutBoolean("elevatorAtZero", elevatorAtZero);
+  frc::SmartDashboard::PutBoolean("elevatorNearZero", elevatorNearZero);
+}
 
 /**
  * This autonomous (along with the chooser code above) shows how to select
@@ -39,29 +60,16 @@ void Robot::RobotPeriodic() {}
  * make sure to add them to the chooser code above as well.
  */
 void Robot::AutonomousInit() {
-  m_autoSelected = m_chooser.GetSelected();
-  // m_autoSelected = SmartDashboard::GetString("Auto Selector",
-  //     kAutoNameDefault);
-  std::cout << "Auto selected: " << m_autoSelected << std::endl;
-
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
 }
 
 void Robot::AutonomousPeriodic() {
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
 }
 
 void Robot::TeleopInit() {}
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic() {
+  elevator.Set(ControlMode::PercentOutput, -gamerJoystick.GetRawAxis(5));
+}
 
 void Robot::TestPeriodic() {}
 

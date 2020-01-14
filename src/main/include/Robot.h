@@ -32,6 +32,7 @@ class Robot : public frc::TimedRobot {
   int absPos2; // historical name. Position of the elevator in encoder units.
   bool elevatorAtZero;
   bool elevatorNearZero;
+  bool elevatorAboveZero;
 
   double gamer5;
 };

@@ -46,6 +46,7 @@ void Robot::RobotPeriodic() {
   absPos2 = elevator.GetSelectedSensorPosition();
   elevatorAtZero = (absPos2 < 3); // copied. not sure why it's 3, and not 0
   elevatorNearZero = (abs(absPos2) < 100);
+  elevatorAboveZero = (absPos2 > 0);
 
   gamer5 = gamerJoystick.GetRawAxis(5);
 
